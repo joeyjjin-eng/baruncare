@@ -456,7 +456,7 @@ const IcoBack = () =>
 
 
 /* Header */
-function Header({ onMenu, onBack, showBack }) {
+function Header({ onMenu, onBack, onHome, showBack }) {
   return (
     <header className="hdr" style={{ opacity: "1", borderWidth: "0px", backgroundColor: "rgba(242, 242, 242, 0)" }}>
       {showBack &&
@@ -464,7 +464,9 @@ function Header({ onMenu, onBack, showBack }) {
           <button className="back-btn" onClick={onBack}><IcoBack />뒤로</button>
         </div>
       }
-      <img src="./ui/project/assets/logo.png" alt="바른케어플러스" className="hdr-logo" style={{ opacity: "1" }} />
+      <button onClick={onHome} aria-label="홈으로" style={{ padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <img src="./ui/project/assets/logo.png" alt="바른케어플러스" className="hdr-logo" style={{ opacity: "1" }} />
+      </button>
       <div className="hdr-right">
         <button className="icon-btn" onClick={onMenu}><IcoMenu /></button>
       </div>
@@ -2311,7 +2313,7 @@ function App() {
 
   return (
     <div className="shell" style={shellStyle}>
-      <Header onMenu={() => setGnb(true)} onBack={prevStep} showBack={screen !== 'home'} />
+      <Header onMenu={() => setGnb(true)} onBack={prevStep} onHome={() => go('home', 'bwd')} showBack={screen !== 'home'} />
       <div key={animKey} className={dir} style={{ display: 'contents' }}>
         {renderBody()}
       </div>
