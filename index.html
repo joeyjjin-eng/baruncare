@@ -2251,12 +2251,22 @@ const IcoChevronR = () => (
 
 function TermsModal({ terms, onBack, onConfirm }) {
   const [agreed, setAgreed] = useState({});
+  const [pending, setPending] = useState(false);
   const allOn = terms.every((t) => agreed[t.key]);
   const allRequiredOn = terms.filter((t) => t.required).every((t) => agreed[t.key]);
   const toggleOne = (key) => setAgreed((a) => ({ ...a, [key]: !a[key] }));
   const toggleAll = () => {
     if (allOn) setAgreed({});
     else setAgreed(Object.fromEntries(terms.map((t) => [t.key, true])));
+  };
+  const handleConfirm = async () => {
+    if (pending || !allRequiredOn) return;
+    setPending(true);
+    try {
+      await onConfirm();
+    } finally {
+      setPending(false);
+    }
   };
   return (
     <div className="terms-overlay">
@@ -2291,8 +2301,10 @@ function TermsModal({ terms, onBack, onConfirm }) {
           </div>
         </div>
         <div className="terms-cta-wrap">
-          <button className="terms-back-btn" onClick={onBack}>뒤로</button>
-          <button className="terms-next-btn" onClick={onConfirm} disabled={!allRequiredOn}>다음</button>
+          <button className="terms-back-btn" onClick={onBack} disabled={pending}>뒤로</button>
+          <button className="terms-next-btn" onClick={handleConfirm} disabled={!allRequiredOn || pending}>
+            {pending ? '전송 중…' : '다음'}
+          </button>
         </div>
       </div>
     </div>
@@ -2342,6 +2354,28 @@ function App() {
     if (step > 0) {setDir('bwd');setStep((s) => s - 1);} else
     go('home', 'bwd');
   };
+
+  /* ---- 서버 전송 헬퍼 ---- */
+  const postJson = async (url, payload) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    let data = null;
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok || !data || data.ok !== true) {
+      throw new Error((data && data.error) || `서버 오류 (${res.status})`);
+    }
+    return data;
+  };
+  const submitFind = () => postJson('./api/find.php', {
+    req: findReq, pt: findPt, place: findPlace, when: findWhen, state: findState
+  });
+  const submitReg = () => postJson('./api/reg.php', regData);
+  const submitClaim = () => postJson('./api/claim.php', {
+    cg: claimCg, pt: claimPt, ins: claimIns, per: claimPer
+  });
 
   const patchFindReq = (k, v) => setFindReq((d) => ({ ...d, [k]: v }));
   const patchFindPt = (k, v) => setFindPt((d) => ({ ...d, [k]: v }));
@@ -2459,19 +2493,28 @@ function App() {
         <TermsModal
           terms={FIND_TERMS}
           onBack={() => setFindTermsOpen(false)}
-          onConfirm={() => {setFindTermsOpen(false);go('find-done');}} />
+          onConfirm={async () => {
+            try { await submitFind(); setFindTermsOpen(false); go('find-done'); }
+            catch (e) { alert('전송 중 오류가 발생했습니다: ' + e.message); }
+          }} />
       }
       {regTermsOpen &&
         <TermsModal
           terms={REG_TERMS}
           onBack={() => setRegTermsOpen(false)}
-          onConfirm={() => {setRegTermsOpen(false);go('reg-done');}} />
+          onConfirm={async () => {
+            try { await submitReg(); setRegTermsOpen(false); go('reg-done'); }
+            catch (e) { alert('전송 중 오류가 발생했습니다: ' + e.message); }
+          }} />
       }
       {claimTermsOpen &&
         <TermsModal
           terms={CLAIM_TERMS}
           onBack={() => setClaimTermsOpen(false)}
-          onConfirm={() => {setClaimTermsOpen(false);go('claim-done');}} />
+          onConfirm={async () => {
+            try { await submitClaim(); setClaimTermsOpen(false); go('claim-done'); }
+            catch (e) { alert('전송 중 오류가 발생했습니다: ' + e.message); }
+          }} />
       }
       {typeof TweaksPanel !== 'undefined' &&
       <TweaksPanel>
