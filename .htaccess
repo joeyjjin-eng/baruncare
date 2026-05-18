@@ -1,0 +1,10 @@
+# PHP 페이지를 기본 인덱스로 사용
+DirectoryIndex index.php index.html
+
+# .htaccess 자체 노출 방지
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+# 디렉토리 인덱싱 차단
+Options -Indexes
