@@ -71,7 +71,7 @@ render_prelude(['title'=>'바른케어플러스', 'active'=>'home']);
     </a>
   </div>
 
-  <a class="home-kakao" href="https://pf.kakao.com/_uAxhxaG" target="_blank" rel="noopener noreferrer">
+  <a class="home-kakao" href="http://pf.kakao.com/_xgmTbX" target="_blank" rel="noopener noreferrer">
     <div class="home-kakao-left">
       <div class="home-kakao-icon"><img src="./ui/project/assets/icn_kakao.png" alt="카카오톡" width="46" height="46"/></div>
       <span class="home-kakao-label">카카오톡 문의</span>

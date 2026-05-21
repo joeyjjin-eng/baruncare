@@ -69,7 +69,7 @@ $regList = ['가족 간병인일 경우!', '간병인으로 일하고 싶으신 
 
   <div class="about-contact">
     <p class="about-contact-title">고민하지말고<br/>궁금한 것이 있다면 바로 문의주세요!</p>
-    <a class="about-contact-btn" href="https://pf.kakao.com/_uAxhxaG" target="_blank" rel="noopener noreferrer">
+    <a class="about-contact-btn" href="http://pf.kakao.com/_xgmTbX" target="_blank" rel="noopener noreferrer">
       <span class="about-contact-btn-left">
         <img src="./ui/project/assets/icn_kakao.png" alt="카카오톡" width="34" height="34"/>
         <span>카카오톡 문의</span>
